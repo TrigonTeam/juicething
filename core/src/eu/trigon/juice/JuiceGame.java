@@ -35,7 +35,7 @@ public class JuiceGame extends ApplicationAdapter {
         this.shape = new ShapeRenderer();
         this.surfRenderer = new ImmediateModeRenderer20(false, true, 0);
 
-        this.fluidSurface = new FluidSurface(Gdx.graphics.getWidth()/4, 0.15f, 0.025f, 0.25f, 3);
+        this.fluidSurface = new FluidSurface(Gdx.graphics.getWidth() / 4, 0.15f, 0.025f, 0.25f, 3);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter p = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -60,7 +60,8 @@ public class JuiceGame extends ApplicationAdapter {
 
         renderTick(this.ticks, ptt);
 
-        this.time = TimeUtils.nanoTime();;
+        this.time = TimeUtils.nanoTime();
+        ;
         while (time - lastTime >= this.tickTimeSec) {
             this.ticks++;
             tick();
@@ -69,8 +70,27 @@ public class JuiceGame extends ApplicationAdapter {
         }
     }
 
+    boolean wasTouched = false;
     private void tick() {
+        if (Gdx.input.isTouched()) {
+            if(!wasTouched) {
+                int x = Gdx.input.getX();
+                int y = Gdx.input.getY();
 
+                double scale = this.fluidSurface.getSegCount() / (double) Gdx.graphics.getWidth();
+
+                this.fluidSurface.splash((int) (scale * x), 100);
+
+                wasTouched = true;
+            }
+        } else {
+            if(wasTouched) {
+                wasTouched = false;
+            }
+        }
+
+
+        this.fluidSurface.tick();
     }
 
     private void renderTick(int tick, float ptt) {
@@ -88,7 +108,7 @@ public class JuiceGame extends ApplicationAdapter {
         float height = Gdx.graphics.getHeight()/3f;
 
         int segCount = this.fluidSurface.getSegCount();
-        float step = Gdx.graphics.getWidth() / (float) (segCount-1);
+        float step = Gdx.graphics.getWidth() / (float) (segCount - 1);
 
         this.surfRenderer.begin(this.batch.getProjectionMatrix(), GL20.GL_TRIANGLE_STRIP);
         for (int i = 0; i < (segCount); i++) {
