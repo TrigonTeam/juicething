@@ -85,7 +85,7 @@ public class JuiceGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(c.r, c.g, c.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float height = 300;
+        float height = Gdx.graphics.getHeight()/3f;
 
         int segCount = this.fluidSurface.getSegCount();
         float step = Gdx.graphics.getWidth() / (float) (segCount-1);
@@ -93,11 +93,10 @@ public class JuiceGame extends ApplicationAdapter {
         this.surfRenderer.begin(this.batch.getProjectionMatrix(), GL20.GL_TRIANGLE_STRIP);
         for (int i = 0; i < (segCount); i++) {
             float x0 = i*step;
-            float ybase = Gdx.graphics.getHeight();
-            float y0 = this.fluidSurface.getRenderSegHeight(i, ptt) - height + ybase;
+            float y0 = this.fluidSurface.getRenderSegHeight(i, ptt) + height;
 
             this.surfRenderer.color(0.5f, 0.5f, 1f, 1f);
-            this.surfRenderer.vertex(x0, ybase, 0);
+            this.surfRenderer.vertex(x0, 0, 0);
             this.surfRenderer.color(0.7f, 0.7f, 1f, 1f);
             this.surfRenderer.vertex(x0, y0, 0);
         }
