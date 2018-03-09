@@ -17,7 +17,7 @@ public class JuiceGame extends ApplicationAdapter {
     Texture img;
     BitmapFont font;
     GlyphLayout l;
-    final String msg = "Hello, honey :)";
+    final String msg = "Ahoj, šotoušku :)";
 
     @Override
     public void create() {
@@ -29,6 +29,7 @@ public class JuiceGame extends ApplicationAdapter {
         FreeTypeFontGenerator.FreeTypeFontParameter p = new FreeTypeFontGenerator.FreeTypeFontParameter();
         p.size = 120;
         p.color = Color.WHITE;
+        p.characters = msg;
         this.font = generator.generateFont(p);
         generator.dispose();
 
@@ -48,12 +49,12 @@ public class JuiceGame extends ApplicationAdapter {
 
         batch.end();
 
-        shape.begin(ShapeRenderer.ShapeType.Line);
+        /*shape.begin(ShapeRenderer.ShapeType.Line);
         shape.setColor(Color.BLACK);
         shape.rect(Gdx.graphics.getWidth() / 2 - this.l.width / 2,
                 Gdx.graphics.getHeight() / 2 - this.l.height / 2,
                 this.l.width, this.l.height);
-        shape.end();
+        shape.end();*/
     }
 
     @Override
