@@ -16,7 +16,7 @@ public class UILayer extends GameLayer {
     }
 
     @Override
-    public void renderTick(int tick, float ptt, boolean isActive) {
+    public void renderTick(int tick, float ptt, boolean isTop) {
 
     }
 

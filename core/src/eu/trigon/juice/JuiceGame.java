@@ -88,7 +88,7 @@ public class JuiceGame extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         for (int i = ti; i < this.layers.size(); i++) {
-            this.layers.get(i).tick(i == (this.layers.size() - 1));
+            this.layers.get(i).renderTick(tick, ptt, i == (this.layers.size() - 1));
         }
     }
 }

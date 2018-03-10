@@ -10,7 +10,7 @@ public abstract class GameLayer {
 
     public abstract boolean tickLayersBelow();
     public abstract boolean renderLayersBelow();
-    public abstract void renderTick(int tick, float ptt, boolean isActive);
+    public abstract void renderTick(int tick, float ptt, boolean isTop);
     public abstract void tick(boolean isActive);
     public abstract void dispose();
 }

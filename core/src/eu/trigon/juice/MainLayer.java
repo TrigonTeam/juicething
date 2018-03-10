@@ -48,7 +48,7 @@ public class MainLayer extends GameLayer {
     }
 
     @Override
-    public void renderTick(int tick, float ptt, boolean isActive) {
+    public void renderTick(int tick, float ptt, boolean isTop) {
         float height = this.waterHeight;
 
         int segCount = this.fluidSurface.getSegCount();
