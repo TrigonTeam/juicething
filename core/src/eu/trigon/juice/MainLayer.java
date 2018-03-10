@@ -37,6 +37,7 @@ public class MainLayer extends GameLayer {
                 true, 0);
     }
 
+
     @Override
     public void renderTick(int tick, float ptt, boolean isActive) {
         float height = this.waterHeight;
@@ -120,5 +121,10 @@ public class MainLayer extends GameLayer {
         this.surfRenderer.dispose();
         this.batch.dispose();
         this.shape.dispose();
+    }
+
+    public void makeTestSplash(int x) {
+        double scale = this.fluidSurface.getSegCount() / (double) Gdx.graphics.getWidth();
+        this.fluidSurface.splash((int) (scale * x), 300);
     }
 }

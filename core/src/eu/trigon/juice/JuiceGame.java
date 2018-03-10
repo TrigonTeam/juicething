@@ -14,12 +14,14 @@ public class JuiceGame extends ApplicationAdapter {
     private long time, lastTime;
     private int ticks;
 
-    private ArrayList<GameLayer> currentLayers;
+    private ArrayList<GameLayer> currentLayers = new ArrayList<GameLayer>();
+    private int currentLayerIndex = -1;
+    private GameLayer currentLayer = null;
+
     private MainLayer main;
     private UILayer ui;
 
-    private int currentLayerIndex = -1;
-    private GameLayer currentLayer = null;
+    private InputHandler handler;
 
     @Override
     public void create() {
@@ -30,6 +32,9 @@ public class JuiceGame extends ApplicationAdapter {
 
         this.currentLayers.add(this.main);
         this.currentLayers.add(this.ui);
+
+        this.handler = new InputHandler(this, this.main, this.ui);
+        Gdx.input.setInputProcessor(this.handler);
     }
 
     @Override
