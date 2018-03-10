@@ -14,9 +14,8 @@ public class JuiceGame extends ApplicationAdapter {
     private long time, lastTime;
     private int ticks;
 
-    private ArrayList<GameLayer> currentLayers = new ArrayList<GameLayer>();
-    private int currentLayerIndex = -1;
-    private GameLayer currentLayer = null;
+    private ArrayList<GameLayer> layers = new ArrayList<GameLayer>();
+    private GameLayer topLayer;
 
     private MainLayer main;
     private UILayer ui;
@@ -30,8 +29,8 @@ public class JuiceGame extends ApplicationAdapter {
         this.main = new MainLayer(this);
         this.ui = new UILayer(this);
 
-        this.currentLayers.add(this.main);
-        this.currentLayers.add(this.ui);
+        this.layers.add(this.main);
+        this.layers.add(this.ui);
 
         this.handler = new InputHandler(this, this.main, this.ui);
         Gdx.input.setInputProcessor(this.handler);
@@ -54,33 +53,33 @@ public class JuiceGame extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        for (int i = 0; i < this.currentLayers.size(); i++) {
-            this.currentLayers.get(i).dispose();
+        for (int i = 0; i < this.layers.size(); i++) {
+            this.layers.get(i).dispose();
         }
     }
 
     private void tick() {
         int ti = 0;
 
-        for (int i = 0; i < this.currentLayers.size(); i++) {
-            GameLayer g = this.currentLayers.get(i);
-            if (!g.tickLayersBelow) {
+        for (int i = 0; i < this.layers.size(); i++) {
+            GameLayer g = this.layers.get(i);
+            if (!g.tickLayersBelow()) {
                 ti = i;
             }
         }
 
-        for (int i = ti; i < this.currentLayers.size(); i++) {
-            this.currentLayers.get(i).tick(i == this.currentLayerIndex);
+        for (int i = ti; i < this.layers.size(); i++) {
+            this.layers.get(i).tick(i == (this.layers.size() - 1));
         }
     }
 
     private void renderTick(int tick, float ptt) {
         int ti = 0;
 
-        for (int i = 0; i < this.currentLayers.size(); i++) {
-            GameLayer g = this.currentLayers.get(i);
+        for (int i = 0; i < this.layers.size(); i++) {
+            GameLayer g = this.layers.get(i);
 
-            if (!g.tickLayersBelow) {
+            if (!g.renderLayersBelow()) {
                 ti = i;
             }
         }
@@ -88,12 +87,8 @@ public class JuiceGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        for (int i = ti; i < this.currentLayers.size(); i++) {
-            this.currentLayers.get(i).tick(i == this.currentLayerIndex);
+        for (int i = ti; i < this.layers.size(); i++) {
+            this.layers.get(i).tick(i == (this.layers.size() - 1));
         }
-    }
-
-    public GameLayer getCurrentLayer() {
-        return this.currentLayer;
     }
 }

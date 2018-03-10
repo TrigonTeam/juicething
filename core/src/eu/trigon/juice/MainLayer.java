@@ -24,7 +24,7 @@ public class MainLayer extends GameLayer {
     private List<FluidDrop> drops;
 
     public MainLayer(JuiceGame g) {
-        super(g, false, false);
+        super(g);
 
         this.fluidSurface = new FluidSurface(Gdx.graphics.getWidth() / 4, 0.04f,
                 0.015f, 0.4f, 6);
@@ -37,6 +37,15 @@ public class MainLayer extends GameLayer {
                 true, 0);
     }
 
+    @Override
+    public boolean tickLayersBelow() {
+        return false;
+    }
+
+    @Override
+    public boolean renderLayersBelow() {
+        return false;
+    }
 
     @Override
     public void renderTick(int tick, float ptt, boolean isActive) {

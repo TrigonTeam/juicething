@@ -15,10 +15,10 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (this.main.isActive()) {
-            this.main.makeTestSplash(screenX);
-        } else if(this.ui.isActive()) {
+        if (this.ui.isActive()) {
 
+        } else {
+            this.main.makeTestSplash(screenX);
         }
 
         return false;

@@ -2,7 +2,17 @@ package eu.trigon.juice;
 
 public class UILayer extends GameLayer {
     public UILayer(JuiceGame game) {
-        super(game, true, false);
+        super(game);
+    }
+
+    @Override
+    public boolean tickLayersBelow() {
+        return true;
+    }
+
+    @Override
+    public boolean renderLayersBelow() {
+        return true;
     }
 
     @Override
@@ -18,5 +28,9 @@ public class UILayer extends GameLayer {
     @Override
     public void dispose() {
 
+    }
+
+    public boolean isActive() {
+        return false;
     }
 }
