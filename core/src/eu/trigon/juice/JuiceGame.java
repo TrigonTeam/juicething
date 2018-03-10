@@ -14,6 +14,11 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
 public class JuiceGame extends ApplicationAdapter {
     SpriteBatch batch;
     ShapeRenderer shape;
@@ -22,6 +27,10 @@ public class JuiceGame extends ApplicationAdapter {
     GlyphLayout l;
 
     FluidSurface fluidSurface;
+    private int waterHeight = 640;
+
+    private Random rand;
+    private List<FluidDrop> drops;
 
     private int tps = 60, nanosPerSec = 1000000000;
     private double tickTime = 1d / tps;
@@ -36,6 +45,9 @@ public class JuiceGame extends ApplicationAdapter {
         this.surfRenderer = new ImmediateModeRenderer20(false, true, 0);
 
         this.fluidSurface = new FluidSurface(Gdx.graphics.getWidth() / 4, 0.04f, 0.015f, 0.4f, 6);
+        this.drops = new ArrayList<FluidDrop>();
+
+        this.rand = new Random();
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter p = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -89,13 +101,55 @@ public class JuiceGame extends ApplicationAdapter {
             }
         }
 
-
         this.fluidSurface.tick();
+
+        if (this.rand.nextInt(10) == 0) {
+            this.drops.add(new FluidDrop(rand.nextInt(Gdx.graphics.getWidth()), Gdx.graphics.getHeight() + 100, 0, 0, 10+rand.nextInt(15)));
+        }
+
+        List<FluidDrop> splashDrops = new ArrayList<FluidDrop>();
+
+        Iterator<FluidDrop> it = this.drops.iterator();
+        while (it.hasNext()) {
+            FluidDrop d = it.next();
+            d.tick();
+
+            if (d.getVelY() > 0) {
+                continue;
+            }
+
+            if(d.getX() > Gdx.graphics.getWidth() || d.getX() < 0) {
+                it.remove();
+                continue;
+            }
+
+            int x = (int)d.getX();
+
+            double scale = this.fluidSurface.getSegCount() / (double) Gdx.graphics.getWidth();
+            x = (int)(scale*x);
+
+            if (d.getY() < this.fluidSurface.getSegHeight(x) + this.waterHeight - d.getSize()*2) {
+                it.remove();
+
+                if (d.getSize() >= 5f) {
+
+                    int pCount = 2 + this.rand.nextInt(4);
+
+                    for (int i = 0; i < pCount; i++) {
+                        splashDrops.add(new FluidDrop(d.getX(), d.getY() - d.getSize(), (rand.nextFloat()-0.5f)*d.getSize()/2, d.getSize()+rand.nextFloat()*d.getSize()/2, d.getSize() / (1.75f + this.rand.nextFloat()*1.5f)));
+                    }
+
+                    this.fluidSurface.splash(x, -d.getSize()*3);
+                }
+            }
+        }
+
+        this.drops.addAll(splashDrops);
     }
 
     private void renderTick(int tick, float ptt) {
         Color c = new Color();
-        c.fromHsv(h, 0.8f, 1);
+        c.fromHsv(h, 0.1f, 1);
 
         h += 50 * Gdx.graphics.getDeltaTime();
         if (h >= 360) {
@@ -105,10 +159,20 @@ public class JuiceGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(c.r, c.g, c.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float height = Gdx.graphics.getHeight()/3f;
+        float height = this.waterHeight;
 
         int segCount = this.fluidSurface.getSegCount();
         float step = Gdx.graphics.getWidth() / (float) (segCount - 1);
+
+        this.shape.begin(ShapeRenderer.ShapeType.Filled);
+
+        this.shape.setColor(0.42f, 0.65f, 1f, 1f);
+
+        for (FluidDrop d : this.drops) {
+            this.shape.circle(d.getRenderX(ptt), d.getRenderY(ptt), d.getSize(), 16);
+        }
+
+        this.shape.end();
 
         this.surfRenderer.begin(this.batch.getProjectionMatrix(), GL20.GL_TRIANGLE_STRIP);
         for (int i = 0; i < (segCount); i++) {
@@ -122,7 +186,7 @@ public class JuiceGame extends ApplicationAdapter {
         }
         this.surfRenderer.end();
 
-        String msg = Integer.toString(ticks);
+        String msg = Integer.toString(this.drops.size());
         this.l.setText(this.font, msg);
 
         batch.begin();
