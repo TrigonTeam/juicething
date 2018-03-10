@@ -2,22 +2,10 @@ package eu.trigon.juice;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
 
 public class JuiceGame extends ApplicationAdapter {
     private int tps = 60, nanosPerSec = 1000000000;
@@ -26,12 +14,22 @@ public class JuiceGame extends ApplicationAdapter {
     private long time, lastTime;
     private int ticks;
 
-    private MainScreen s;
+    private ArrayList<GameLayer> currentLayers;
+    private MainLayer main;
+    private UILayer ui;
+
+    private int currentLayerIndex = -1;
+    private GameLayer currentLayer = null;
 
     @Override
     public void create() {
         this.time = this.lastTime = TimeUtils.nanoTime();
-        this.s = new MainScreen();
+
+        this.main = new MainLayer(this);
+        this.ui = new UILayer(this);
+
+        this.currentLayers.add(this.main);
+        this.currentLayers.add(this.ui);
     }
 
     @Override
@@ -49,19 +47,48 @@ public class JuiceGame extends ApplicationAdapter {
         }
     }
 
+    @Override
+    public void dispose() {
+        for (int i = 0; i < this.currentLayers.size(); i++) {
+            this.currentLayers.get(i).dispose();
+        }
+    }
+
     private void tick() {
-        this.s.tick();
+        int ti = 0;
+
+        for (int i = 0; i < this.currentLayers.size(); i++) {
+            GameLayer g = this.currentLayers.get(i);
+            if (!g.tickLayersBelow) {
+                ti = i;
+            }
+        }
+
+        for (int i = ti; i < this.currentLayers.size(); i++) {
+            this.currentLayers.get(i).tick(i == this.currentLayerIndex);
+        }
     }
 
     private void renderTick(int tick, float ptt) {
+        int ti = 0;
+
+        for (int i = 0; i < this.currentLayers.size(); i++) {
+            GameLayer g = this.currentLayers.get(i);
+
+            if (!g.tickLayersBelow) {
+                ti = i;
+            }
+        }
+
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        this.s.renderTick(tick, ptt);
+        for (int i = ti; i < this.currentLayers.size(); i++) {
+            this.currentLayers.get(i).tick(i == this.currentLayerIndex);
+        }
     }
 
-    @Override
-    public void dispose() {
-        this.s.dispose();
+    public GameLayer getCurrentLayer() {
+        return this.currentLayer;
     }
 }
