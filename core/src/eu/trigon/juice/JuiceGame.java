@@ -23,7 +23,7 @@ public class JuiceGame extends ApplicationAdapter {
 
     FluidSurface fluidSurface;
 
-    private int tps = 20, nanosPerSec = 1000000000;
+    private int tps = 60, nanosPerSec = 1000000000;
     private double tickTime = 1d / tps;
     private double tickTimeSec = this.tickTime * this.nanosPerSec;
     private long time, lastTime;
@@ -35,7 +35,7 @@ public class JuiceGame extends ApplicationAdapter {
         this.shape = new ShapeRenderer();
         this.surfRenderer = new ImmediateModeRenderer20(false, true, 0);
 
-        this.fluidSurface = new FluidSurface(Gdx.graphics.getWidth() / 4, 0.15f, 0.025f, 0.25f, 3);
+        this.fluidSurface = new FluidSurface(Gdx.graphics.getWidth() / 4, 0.04f, 0.015f, 0.4f, 6);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter p = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -79,7 +79,7 @@ public class JuiceGame extends ApplicationAdapter {
 
                 double scale = this.fluidSurface.getSegCount() / (double) Gdx.graphics.getWidth();
 
-                this.fluidSurface.splash((int) (scale * x), 100);
+                this.fluidSurface.splash((int) (scale * x), 300);
 
                 wasTouched = true;
             }
@@ -115,9 +115,9 @@ public class JuiceGame extends ApplicationAdapter {
             float x0 = i*step;
             float y0 = this.fluidSurface.getRenderSegHeight(i, ptt) + height;
 
-            this.surfRenderer.color(0.5f, 0.5f, 1f, 1f);
+            this.surfRenderer.color(0.0f, 0.38f, 1f, 1f);
             this.surfRenderer.vertex(x0, 0, 0);
-            this.surfRenderer.color(0.7f, 0.7f, 1f, 1f);
+            this.surfRenderer.color(0.42f, 0.65f, 1f, 1f);
             this.surfRenderer.vertex(x0, y0, 0);
         }
         this.surfRenderer.end();
