@@ -23,6 +23,13 @@ public class JuiceGame extends ApplicationAdapter {
     private InputHandler handler;
 
     @Override
+    public void resize(int width, int height) {
+        this.main.viewport.update(width, height);
+        this.main.camera.position.x = this.main.viewport.getWorldWidth()/2;
+        this.main.camera.position.y = this.main.viewport.getWorldHeight()/2;
+    }
+
+    @Override
     public void create() {
         this.time = this.lastTime = TimeUtils.nanoTime();
 
